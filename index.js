@@ -23,7 +23,6 @@ const createServer = () => {
 
   // Error handler MIddleware
   app.use(globalErrorHandler);
-
   return app;
 };
 

@@ -3,6 +3,7 @@ const ApiError = require("../../utils/ApiError");
 const Post = require("../../models/postModel");
 const catchAsync = require("../../utils/catchAsync");
 const isAllowedToUpdateOrDelete = require("../../utils/isAllowedToChange");
+const ApiFeatures = require("../../utils/apiFeatures");
 
 const createPost = catchAsync(async (req, res) => {
   const post = await Post.create({
@@ -19,7 +20,13 @@ const createPost = catchAsync(async (req, res) => {
 });
 
 const getAllPosts = catchAsync(async (req, res) => {
-  const posts = await Post.find();
+  const features = new ApiFeatures(Post.find(), req.query)
+    .filter()
+    .limitFields()
+    .paginate()
+    .sort();
+
+  const posts = await features.query;
 
   res.status(StatusCodes.OK).json({
     status: "success",

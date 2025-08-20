@@ -4,7 +4,6 @@
   "main": "index.js",
   "scripts": {
     "start": "nodemon index.js",
-    "bun": "bun index.js",
     "debug": "ndb index.js"
   },
   "author": "rober",
