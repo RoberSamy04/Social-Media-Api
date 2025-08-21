@@ -1,15 +1,26 @@
 const { StatusCodes } = require("http-status-codes");
 const ApiError = require("../../utils/ApiError");
 const Comment = require("../../models/commentModel");
+const Post = require("../../models/postModel");
 const catchAsync = require("../../utils/catchAsync");
 const isAllowedToUpdateOrDelete = require("../../utils/isAllowedToChange");
+const ApiFeatures = require("../../utils/apiFeatures");
+const calcTheCount = require("../../utils/calcRepliesCommentCount");
 
 const createComment = catchAsync(async (req, res) => {
+  const post = await Post.findById(req.params.postId);
+
+  if (!post) {
+    throw new ApiError("The Post Doesn't Exists", StatusCodes.BAD_REQUEST);
+  }
+
   const comment = await Comment.create({
     user: req.user.id,
     post: req.params.postId,
     content: req.body.content,
   });
+
+  await calcTheCount.incrementCount(req.params.postId);
 
   res.status(StatusCodes.CREATED).json({
     status: "success",
@@ -20,7 +31,11 @@ const createComment = catchAsync(async (req, res) => {
 });
 
 const getAllComments = catchAsync(async (req, res) => {
-  const comments = await Comment.find({ post: req.params.postId });
+  const features = new ApiFeatures(
+    Comment.find({ post: req.params.postId }),
+    req.query
+  );
+  const comments = await features.query;
 
   res.status(StatusCodes.OK).json({
     status: "success",
@@ -60,6 +75,8 @@ const deleteComment = catchAsync(async (req, res) => {
     throw new ApiError("Comment Not Found", StatusCodes.NOT_FOUND);
   }
   isAllowedToUpdateOrDelete(req, comment);
+
+  await calcTheCount.decrementCount(comment.post._id, "comment");
 
   await comment.deleteOne();
 

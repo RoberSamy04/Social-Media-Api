@@ -1,15 +1,26 @@
 const { StatusCodes } = require("http-status-codes");
 const ApiError = require("../../utils/ApiError");
 const Reply = require("../../models/replyModel");
+const Comment = require("../../models/commentModel");
 const catchAsync = require("../../utils/catchAsync");
 const isAllowedToUpdateOrDelete = require("../../utils/isAllowedToChange");
+const calcTheCount = require("../../utils/calcRepliesCommentCount");
 
 const createReply = catchAsync(async (req, res) => {
+  const comment = await Comment.findById(req.params.commentId);
+
+  if (!comment) {
+    throw new ApiError("this comment doesn't exists", StatusCodes.BAD_REQUEST);
+  }
+
   const reply = await Reply.create({
     user: req.user.id,
     comment: req.params.commentId,
     content: req.body.content,
   });
+
+  // increment the commentsCount
+  await calcTheCount.incrementCount(comment.post._id);
 
   res.status(StatusCodes.CREATED).json({
     status: "success",
@@ -60,6 +71,9 @@ const deleteReply = catchAsync(async (req, res) => {
     throw new ApiError("Reply Not Found", StatusCodes.NOT_FOUND);
   }
   isAllowedToUpdateOrDelete(req, reply);
+
+  // decrement the commentsCount
+  await calcTheCount.decrementCount(reply.comment._id, "reply");
 
   await reply.deleteOne();
 

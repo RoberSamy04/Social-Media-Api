@@ -1,5 +1,3 @@
-// find() <- query find({req.query} <-query string)
-
 class ApiFeatures {
   constructor(query, queryString) {
     this.query = query;
