@@ -53,7 +53,7 @@ const updateComment = catchAsync(async (req, res) => {
     throw new ApiError("Comment Not Found", StatusCodes.NOT_FOUND);
   }
 
-  isAllowedToUpdateOrDelete(req, comment);
+  isAllowedToUpdateOrDelete(req.user.id, comment);
 
   comment.content = req.body.content;
   comment.isEdited = true;
@@ -74,7 +74,7 @@ const deleteComment = catchAsync(async (req, res) => {
   if (!comment) {
     throw new ApiError("Comment Not Found", StatusCodes.NOT_FOUND);
   }
-  isAllowedToUpdateOrDelete(req, comment);
+  isAllowedToUpdateOrDelete(req.user.id, comment);
 
   await calcTheCount.decrementCount(comment.post._id, "comment");
 

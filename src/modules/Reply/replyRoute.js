@@ -2,10 +2,10 @@ const { Router } = require("express");
 const replyController = require("./replyController");
 const authMiddleware = require("../../middlewares/auth");
 
-const router = Router();
+const router = Router({ mergeParams: true });
 
 router
-  .route("/:commentId")
+  .route("/")
   .post(authMiddleware.protect, replyController.createReply)
   .get(replyController.getAllReplies);
 

@@ -58,7 +58,7 @@ const updatePost = catchAsync(async (req, res) => {
     throw new ApiError("Post Not Found", StatusCodes.NOT_FOUND);
   }
 
-  isAllowedToUpdateOrDelete(req, post);
+  isAllowedToUpdateOrDelete(req.user.id, post);
 
   post.isEdited = true;
   post.content = req.body.content;
@@ -78,7 +78,7 @@ const deletePost = catchAsync(async (req, res) => {
     throw new ApiError("Post Not Found", StatusCodes.NOT_FOUND);
   }
 
-  isAllowedToUpdateOrDelete(req, post);
+  isAllowedToUpdateOrDelete(req.user.id, post);
 
   await post.deleteOne();
   res.status(StatusCodes.NO_CONTENT).json({

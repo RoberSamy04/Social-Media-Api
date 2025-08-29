@@ -41,25 +41,3 @@ module.exports = class Email {
     }
   }
 };
-
-// const sendEmail = async (options) => {
-//   const transport = nodeMailer.createTransport({
-//     host: process.env.MAIL_TRAP_HOST,
-//     port: process.env.MAIL_TRAP_PORT,
-//     auth: {
-//       user: process.env.MAIL_TRAP_USER,
-//       pass: process.env.MAIL_TRAP_PASS,
-//     },
-//   });
-
-//   const mailOptions = {
-//     from: "<robersamy361@gmail.com>",
-//     to: options.email,
-//     subject: welcome.subject,
-//     html: welcome.html(options.email.split("@")[0]),
-//   };
-
-//   await transport.sendMail(mailOptions);
-// };
-
-//new Email(user , url).welcome()

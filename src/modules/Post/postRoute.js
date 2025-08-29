@@ -1,8 +1,11 @@
 const { Router } = require("express");
 const postController = require("./postController");
 const authMiddleware = require("../../middlewares/auth");
+const commentRouter = require("../Comment/commentRoute");
 
 const router = Router();
+
+router.use("/:postId/comments", commentRouter);
 
 router
   .route("/")

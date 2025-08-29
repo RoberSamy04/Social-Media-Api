@@ -1,11 +1,14 @@
 const { Router } = require("express");
 const commentController = require("./commentController");
 const authMiddleware = require("../../middlewares/auth");
+const replyRouter = require("../Reply/replyRoute");
 
-const router = Router();
+const router = Router({ mergeParams: true });
+
+router.use("/:commentId/replies", replyRouter);
 
 router
-  .route("/:postId")
+  .route("/")
   .post(authMiddleware.protect, commentController.createComment)
   .get(commentController.getAllComments);
 

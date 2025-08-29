@@ -49,7 +49,7 @@ const updateReply = catchAsync(async (req, res) => {
     throw new ApiError("Reply Not Found", StatusCodes.NOT_FOUND);
   }
 
-  isAllowedToUpdateOrDelete(req, reply);
+  isAllowedToUpdateOrDelete(req.user.id, reply);
 
   reply.content = req.body.content;
   reply.isEdited = true;
@@ -70,7 +70,7 @@ const deleteReply = catchAsync(async (req, res) => {
   if (!reply) {
     throw new ApiError("Reply Not Found", StatusCodes.NOT_FOUND);
   }
-  isAllowedToUpdateOrDelete(req, reply);
+  isAllowedToUpdateOrDelete(req.user.id, reply);
 
   // decrement the commentsCount
   await calcTheCount.decrementCount(reply.comment._id, "reply");
